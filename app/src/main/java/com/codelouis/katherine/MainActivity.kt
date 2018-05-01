@@ -28,14 +28,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val TAG = MainActivity::class.java.simpleName
 
-    private var pDialog: ProgressDialog? = null
-    private var lv: ListView? = null
 
-    // URL to get contacts JSON
-    private val url = "https://api.androidhive.info/contacts/"
-
-
-    var contactList: ArrayList<HashMap<String,String>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        contactList = ArrayList()
-        lv = findViewById(R.id.list) as ListView
+
 
         Log.d(TAG, "hola  " )
     }

@@ -2,8 +2,12 @@ package com.codelouis.katherine
 
 import android.app.ProgressDialog
 import android.os.AsyncTask
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.Toast
@@ -25,6 +29,11 @@ class DataFragment : Fragment() {
 
 
     var contactList: ArrayList<HashMap<String,String>>? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_datafragment, container, false)
+    }
 
     /**
      * Async task class to get json by making HTTP call
