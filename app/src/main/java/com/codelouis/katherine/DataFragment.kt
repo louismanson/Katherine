@@ -21,6 +21,8 @@ class DataFragment : Fragment() {
 
     private val TAG = DataFragment::class.simpleName
 
+    private val ARG_SECTION_NUMBER = "section_number"
+
     private var pDialog: ProgressDialog? = null
     private var lv: ListView? = null
 
@@ -29,6 +31,18 @@ class DataFragment : Fragment() {
 
 
     var contactList: ArrayList<HashMap<String,String>>? = null
+
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number.
+     */
+    fun newInstance(sectionNumber: Int): DataFragment {
+        val fragment = DataFragment()
+        val args = Bundle()
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber)
+        fragment.arguments = args
+        return fragment
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

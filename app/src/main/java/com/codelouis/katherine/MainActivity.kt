@@ -5,7 +5,12 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -28,7 +33,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val TAG = MainActivity::class.java.simpleName
 
-
+    private var tabLayout: TabLayout? = null
+    private var mViewPager: ViewPager? = null
+    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +109,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
+
+    inner class SectionsPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+        override fun getItem(position: Int): Fragment {
+            return DataFragment().newInstance(position+1)
+        }
+
+
+        override fun getCount(): Int {
+            // show 3 tabs
+            return 3
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            when(position){
+                0 -> return "Day"
+                1 -> return "week"
+                2 -> return "Month"
+                else -> return "Day"
+            }
+
+
+        }
+
+    }
+
+
+
+
+
+
 
 
 
