@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -37,9 +38,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
+        /*fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
+        }*/
+
+        fab.setOnClickListener {
+            val page = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager?.getCurrentItem()) as DataFragment
+            page.refresh()
         }
 
         val toggle = ActionBarDrawerToggle(

@@ -59,6 +59,11 @@ class DataFragment : Fragment() {
         return rootView
     }
 
+    fun refresh(){
+        GetContacts().execute()
+    }
+
+
     /**
      * Async task class to get json by making HTTP call
      */
