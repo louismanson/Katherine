@@ -19,7 +19,7 @@ import org.json.JSONObject
  */
 class DataFragment : Fragment() {
 
-    private val TAG = DataFragment::class.simpleName
+    private val TAG = DataFragment::class.java.simpleName
 
     private val ARG_SECTION_NUMBER = "section_number"
 
@@ -44,9 +44,12 @@ class DataFragment : Fragment() {
         return fragment
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_datafragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        var rootView = inflater.inflate(R.layout.fragment_datafragment, container, false)
+        //var textView = rootView.findViewById<>()
+
+        return rootView
     }
 
     /**

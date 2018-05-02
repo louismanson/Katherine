@@ -1,7 +1,6 @@
 package com.codelouis.katherine
 
-import android.app.ProgressDialog
-import android.os.AsyncTask
+
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -16,13 +15,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ListView
-import android.widget.SimpleAdapter
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.json.JSONException
-import org.json.JSONObject
+
 
 /**
  * Created by Luis Hernandez on 26/April/2018
@@ -54,6 +49,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = findViewById(R.id.container) as ViewPager
+        mViewPager?.setAdapter(mSectionsPagerAdapter)
+
+        tabLayout = findViewById(R.id.tabs) as TabLayout
+        tabLayout?.setupWithViewPager(mViewPager)
 
 
         Log.d(TAG, "hola  " )
@@ -109,7 +114,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
-
 
 
     inner class SectionsPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
