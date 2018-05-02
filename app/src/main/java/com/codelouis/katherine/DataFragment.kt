@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import android.widget.TextView
 import android.widget.Toast
 import org.json.JSONException
 import org.json.JSONObject
@@ -47,7 +48,13 @@ class DataFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         var rootView = inflater.inflate(R.layout.fragment_datafragment, container, false)
-        //var textView = rootView.findViewById<>()
+        var textView = rootView.findViewById(R.id.section_label) as TextView
+        textView.setText(getString(R.string.section_format,getArguments()?.getInt(ARG_SECTION_NUMBER)))
+
+        contactList = ArrayList()
+        lv = rootView.findViewById(R.id.list3)
+
+        GetContacts().execute()
 
         return rootView
     }
@@ -62,9 +69,9 @@ class DataFragment : Fragment() {
             Log.d(TAG, "pre  " )
             // Showing progress dialog
             pDialog = ProgressDialog(context)
-            pDialog!!.setMessage("Please wait...")
-            pDialog!!.setCancelable(false)
-            pDialog!!.show()
+            pDialog?.setMessage("Please wait...")
+            pDialog?.setCancelable(false)
+            pDialog?.show()
 
         }
 
@@ -76,8 +83,6 @@ class DataFragment : Fragment() {
 
             // Making a request to url and getting response
             val jsonStr = sh.makeServiceCall(url)
-
-            Log.e(TAG, "Response from url: " + jsonStr!!)
 
             if (jsonStr != null) {
                 Log.d(TAG, "jsonStr != null  " )
@@ -115,7 +120,7 @@ class DataFragment : Fragment() {
                         contact["mobile"] = mobile
 
                         // adding contact to contact list
-                        contactList!!.add(contact)
+                        contactList?.add(contact)
                     }
                 } catch (e: JSONException) {
                     Log.d(TAG, "valio pito")
@@ -156,8 +161,8 @@ class DataFragment : Fragment() {
             val adapter = SimpleAdapter(
                     context, contactList,
                     R.layout.list_item, arrayOf("name", "email", "mobile"), intArrayOf(R.id.name, R.id.email, R.id.mobile))
+            lv?.setAdapter(adapter)
 
-            lv!!.setAdapter(adapter)
         }
 
     }
