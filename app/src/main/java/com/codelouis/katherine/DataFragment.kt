@@ -54,9 +54,7 @@ class DataFragment : Fragment() {
         contactList = ArrayList()
         lv = rootView.findViewById(R.id.list3)
 
-
-
-        //GetContacts().execute()
+        GetContacts().execute()
 
         return rootView
     }
@@ -64,6 +62,7 @@ class DataFragment : Fragment() {
     fun refresh(){
         GetContacts().execute()
     }
+
 
 
     /**
