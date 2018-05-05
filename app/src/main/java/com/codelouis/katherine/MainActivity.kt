@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener {
             val page = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager?.getCurrentItem()) as DataFragment
             page.refresh()
+            Toast.makeText(applicationContext, "Endpoint server call (contacts example)", Toast.LENGTH_SHORT).show()
         }
 
         val toggle = ActionBarDrawerToggle(
