@@ -12,6 +12,7 @@ import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import org.json.JSONException
@@ -60,6 +61,8 @@ class DataFragment : Fragment() {
         lv = rootView.findViewById(R.id.list3)
 
 
+        var mGraph = rootView.findViewById(R.id.graph) as GraphView
+
         when (arguments!!.getInt(ARG_SECTION_NUMBER)) {
             1 -> {
                 textView.text = "Today"
@@ -78,7 +81,9 @@ class DataFragment : Fragment() {
             }
         }
 
-        GetContacts().execute()
+        mGraph.addSeries(series)
+
+        //GetContacts().execute()
 
         return rootView
     }
