@@ -12,6 +12,8 @@ import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.jjoe64.graphview.series.DataPoint
+import com.jjoe64.graphview.series.LineGraphSeries
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -33,6 +35,8 @@ class DataFragment : Fragment() {
 
     var contactList: ArrayList<HashMap<String,String>>? = null
 
+    lateinit var series: LineGraphSeries<DataPoint>
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -49,10 +53,30 @@ class DataFragment : Fragment() {
 
         var rootView = inflater.inflate(R.layout.fragment_datafragment, container, false)
         var textView = rootView.findViewById(R.id.section_label) as TextView
+        var mPeopleNumber = rootView.findViewById(R.id.person_count) as TextView
         textView.setText(getString(R.string.section_format,getArguments()?.getInt(ARG_SECTION_NUMBER)))
 
         contactList = ArrayList()
         lv = rootView.findViewById(R.id.list3)
+
+
+        when (arguments!!.getInt(ARG_SECTION_NUMBER)) {
+            1 -> {
+                textView.text = "Today"
+                mPeopleNumber.setText("310")
+                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 2.0), DataPoint(2.0, 3.0), DataPoint(3.0, 4.0), DataPoint(4.0, 6.0)))
+            }
+            2 -> {
+                textView.text = "Last Month"
+                mPeopleNumber.setText("1,321")
+                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 5.0), DataPoint(2.0, 6.0), DataPoint(3.0, 2.0), DataPoint(4.0, 1.0)))
+            }
+            3 -> {
+                textView.text = "Last Year"
+                mPeopleNumber.setText("12,453")
+                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 5.0), DataPoint(2.0, 3.0), DataPoint(3.0, 2.0), DataPoint(4.0, 6.0), DataPoint(5.0, 1.0), DataPoint(6.0, 5.0), DataPoint(7.0, 7.0), DataPoint(8.0, 2.0), DataPoint(9.0, 6.0)))
+            }
+        }
 
         GetContacts().execute()
 
