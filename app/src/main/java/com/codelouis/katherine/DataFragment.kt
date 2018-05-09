@@ -27,7 +27,7 @@ class DataFragment : Fragment() {
 
     private val ARG_SECTION_NUMBER = "section_number"
 
-    private var pDialog: ProgressDialog? = null
+    //private var pDialog: ProgressDialog? = null
     private var lv: ListView? = null
 
     // URL to get contacts JSON
@@ -37,6 +37,8 @@ class DataFragment : Fragment() {
     var contactList: ArrayList<HashMap<String,String>>? = null
 
     lateinit var series: LineGraphSeries<DataPoint>
+
+    private var mLoadingFragment: AnimationDialogFragment? = null
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -103,11 +105,12 @@ class DataFragment : Fragment() {
             super.onPreExecute()
             Log.d(TAG, "pre  " )
             // Showing progress dialog
-            pDialog = ProgressDialog(context)
+            /*pDialog = ProgressDialog(context)
             pDialog?.setMessage("Please wait...")
             pDialog?.setCancelable(false)
-            pDialog?.show()
-
+            pDialog?.show()*/
+            mLoadingFragment = AnimationDialogFragment()
+            mLoadingFragment?.show(fragmentManager, "Loading")
         }
 
 
@@ -188,8 +191,9 @@ class DataFragment : Fragment() {
             super.onPostExecute(result)
             Log.d(TAG, "fin")
             // Dismiss the progress dialog
-            if (pDialog!!.isShowing)
-                pDialog!!.dismiss()
+            /*if (pDialog!!.isShowing)
+                pDialog!!.dismiss()*/
+            mLoadingFragment?.dismiss()
             /**
              * Updating parsed JSON data into ListView
              */
