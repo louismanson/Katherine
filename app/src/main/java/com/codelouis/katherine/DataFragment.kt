@@ -1,5 +1,6 @@
 package com.codelouis.katherine
 
+import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
-import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.jjoe64.graphview.GraphView
@@ -30,14 +30,16 @@ class DataFragment : Fragment() {
     private var lv: ListView? = null
 
     // URL to get contacts JSON
-    private val url = "https://api.androidhive.info/contacts/"
+    private lateinit var url: String
 
 
-    var contactList: ArrayList<HashMap<String,String>>? = null
-
-    lateinit var series: LineGraphSeries<DataPoint>
+    var dataList: ArrayList<HashMap<String,String>>? = null
 
     private var mLoadingFragment: AnimationDialogFragment? = null
+    private lateinit var mGraph: GraphView
+    private lateinit var mPeopleNumber: TextView
+
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -51,40 +53,37 @@ class DataFragment : Fragment() {
         return fragment
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        var rootView = inflater.inflate(R.layout.fragment_datafragment, container, false)
-        var textView = rootView.findViewById(R.id.section_label) as TextView
-        var mPeopleNumber = rootView.findViewById(R.id.person_count) as TextView
-        textView.setText(getString(R.string.section_format,getArguments()?.getInt(ARG_SECTION_NUMBER)))
+        val rootView = inflater.inflate(R.layout.fragment_datafragment, container, false)
+        val textView = rootView.findViewById(R.id.section_label) as TextView
+        mPeopleNumber = rootView.findViewById(R.id.person_count) as TextView
+        textView.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
 
-        contactList = ArrayList()
+        dataList = ArrayList()
         lv = rootView.findViewById(R.id.list3)
 
 
-        var mGraph = rootView.findViewById(R.id.graph) as GraphView
+        mGraph = rootView.findViewById(R.id.graph) as GraphView
 
         when (arguments!!.getInt(ARG_SECTION_NUMBER)) {
             1 -> {
                 textView.text = "Today"
-                mPeopleNumber.setText("310")
-                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 2.0), DataPoint(2.0, 3.0), DataPoint(3.0, 4.0), DataPoint(4.0, 6.0)))
+                url = "https://firebasestorage.googleapis.com/v0/b/polyfireapp2.appspot.com/o/pruebajson.json?alt=media&token=d5c47f6c-2eb1-433a-8cdd-060f9df93ab0"
+                GetContacts().execute()
             }
             2 -> {
                 textView.text = "Last Month"
-                mPeopleNumber.setText("1,321")
-                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 5.0), DataPoint(2.0, 6.0), DataPoint(3.0, 2.0), DataPoint(4.0, 1.0)))
+                url = "https://firebasestorage.googleapis.com/v0/b/polyfireapp2.appspot.com/o/pruebaano.json?alt=media&token=9919f0eb-4022-4ef2-80e2-c939a246f4d2"
+                GetContacts().execute()
             }
             3 -> {
                 textView.text = "Last Year"
-                mPeopleNumber.setText("12,453")
-                series = LineGraphSeries(arrayOf(DataPoint(0.0, 1.0), DataPoint(1.0, 5.0), DataPoint(2.0, 3.0), DataPoint(3.0, 2.0), DataPoint(4.0, 6.0), DataPoint(5.0, 1.0), DataPoint(6.0, 5.0), DataPoint(7.0, 7.0), DataPoint(8.0, 2.0), DataPoint(9.0, 6.0)))
+                url = "https://firebasestorage.googleapis.com/v0/b/polyfireapp2.appspot.com/o/pruebames.json?alt=media&token=92a5465a-bcbe-4dc8-9814-6388ee46b34c"
+                GetContacts().execute()
             }
         }
-
-        mGraph.addSeries(series)
-
-        //GetContacts().execute()
 
         return rootView
     }
@@ -98,16 +97,12 @@ class DataFragment : Fragment() {
     /**
      * Async task class to get json by making HTTP call
      */
+    @SuppressLint("StaticFieldLeak")
     private inner class GetContacts : AsyncTask<Void, Void, String>() {
 
         override fun onPreExecute() {
             super.onPreExecute()
             Log.d(TAG, "pre  " )
-            // Showing progress dialog
-            /*pDialog = ProgressDialog(context)
-            pDialog?.setMessage("Please wait...")
-            pDialog?.setCancelable(false)
-            pDialog?.show()*/
             mLoadingFragment = AnimationDialogFragment()
             mLoadingFragment?.show(fragmentManager, "Loading")
         }
@@ -126,38 +121,30 @@ class DataFragment : Fragment() {
                 try {
                     val jsonObj = JSONObject(jsonStr)
 
+                    dataList?.clear()
+
                     // Getting JSON Array node
-                    val contacts = jsonObj.getJSONArray("contacts")
+                    val contacts = jsonObj.getJSONArray("lecturas")
                     Log.d(TAG, "try  " )
 
                     // looping through All Contacts
                     for (i in 0 until contacts.length()) {
                         val c = contacts.getJSONObject(i)
 
-                        Log.d(TAG, "for  " )
-                        val id = c.getString("id")
-                        val name = c.getString("name")
-                        val email = c.getString("email")
-                        val address = c.getString("address")
-                        val gender = c.getString("gender")
+                        val date = c.getString("date")
+                        val time = c.getString("time")
+                        val count = c.getString("count")
 
-                        // Phone node is JSON Object
-                        val phone = c.getJSONObject("phone")
-                        val mobile = phone.getString("mobile")
-                        val home = phone.getString("home")
-                        val office = phone.getString("office")
-
-                        // tmp hash map for single contact
-                        val contact = java.util.HashMap<String, String>()
+                        val data = java.util.HashMap<String, String>()
 
                         // adding each child node to HashMap key => value
-                        contact["id"] = id
-                        contact["name"] = name
-                        contact["email"] = email
-                        contact["mobile"] = mobile
+
+                        data["time"] = time
+                        data["date"] = date
+                        data["count"] = count
 
                         // adding contact to contact list
-                        contactList?.add(contact)
+                        dataList?.add(data)
                     }
                 } catch (e: JSONException) {
                     Log.d(TAG, "valio pito")
@@ -193,14 +180,21 @@ class DataFragment : Fragment() {
             /*if (pDialog!!.isShowing)
                 pDialog!!.dismiss()*/
             mLoadingFragment?.dismiss()
-            /**
-             * Updating parsed JSON data into ListView
-             */
-            val adapter = SimpleAdapter(
-                    context, contactList,
-                    R.layout.list_item, arrayOf("name", "email", "mobile"), intArrayOf(R.id.name, R.id.email, R.id.mobile))
-            lv?.setAdapter(adapter)
 
+            //render data
+            var counter = 0
+            var serie: LineGraphSeries<DataPoint> = LineGraphSeries()
+
+            for(i in 0 until dataList!!.size){
+                counter += dataList!!.get(i)["count"]!!.toInt()
+                serie.appendData(
+                        DataPoint(i.toDouble(), (dataList!!.get(i)["count"])!!.toDouble() ),
+                        true,
+                        dataList!!.size
+                )
+            }
+            mPeopleNumber.text = counter.toString()
+            mGraph.addSeries(serie)
         }
 
     }
