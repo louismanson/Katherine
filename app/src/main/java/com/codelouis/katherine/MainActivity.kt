@@ -213,10 +213,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 2 -> return "Month"
                 else -> return "Day"
             }
-
-
         }
-
     }
 
     override fun onStart() {
@@ -225,7 +222,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun goLogInScreen(){
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
 
@@ -239,7 +236,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(applicationContext, R.string.not_revoke, Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     override fun onDestroy() {
