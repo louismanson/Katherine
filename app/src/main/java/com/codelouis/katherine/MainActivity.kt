@@ -1,6 +1,7 @@
 package com.codelouis.katherine
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -16,7 +17,18 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.ResultCallback
+import com.google.android.gms.common.api.Status
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -26,13 +38,23 @@ import kotlinx.android.synthetic.main.app_bar_main.*
  */
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     private val TAG = MainActivity::class.java.simpleName
 
     private var tabLayout: TabLayout? = null
     private var mViewPager: ViewPager? = null
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+
+    private var headerView: View? = null
+
+    private var photoImageView: ImageView? = null
+    private var nameTextView: TextView? = null
+    private var emailTextView: TextView? = null
+    private var backgroundView: ImageView? = null
+    private var googleApiClient: GoogleApiClient? = null
+    private var firebaseAuth: FirebaseAuth? = null
+    private var firebaseAuthListener: FirebaseAuth.AuthStateListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +90,58 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         tabLayout = findViewById(R.id.tabs) as TabLayout
         tabLayout?.setupWithViewPager(mViewPager)
 
+        headerView = nav_view.getHeaderView(0)
 
-        Log.d(TAG, "hola  " )
+        setNavigationViewListner()
+
+        photoImageView = headerView?.findViewById(R.id.avatar_photo) as ImageView
+        nameTextView = headerView?.findViewById(R.id.avatar_name) as TextView
+        emailTextView = headerView?.findViewById(R.id.avatar_mail) as TextView
+        backgroundView = headerView?.findViewById(R.id.avatar_background) as ImageView
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build()
+
+        googleApiClient = GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build()
+
+        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseAuthListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                setUserData(user)
+                nav_view.menu.getItem(0).isVisible = false
+                nav_view.menu.getItem(1).isVisible = true
+            } else {
+                nameTextView?.text = "Guest"
+                emailTextView?.text = ""
+                backgroundView?.setImageResource(R.color.cardview_dark_background)
+                photoImageView?.setImageResource(R.mipmap.ic_launcher_round)
+                //goLogInScreen();
+                nav_view.menu.getItem(0).isVisible = true
+                nav_view.menu.getItem(1).isVisible = false
+            }
+        }
+
+
+
     }
+
+    private fun setNavigationViewListner(){
+        var navigationView = findViewById(R.id.nav_view) as NavigationView
+        navigationView.setNavigationItemSelectedListener(this)
+    }
+
+    private fun setUserData(user: FirebaseUser){
+        Toast.makeText(this, "Loging as " + user.email!!, Toast.LENGTH_SHORT).show()
+        nameTextView?.text = user.displayName
+        emailTextView?.text = user.email
+        Glide.with(baseContext).load(user.photoUrl).into(photoImageView!!)
+    }
+
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -100,10 +171,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_camera -> {
-                // Handle the camera action
+                goLogInScreen()
             }
             R.id.nav_gallery -> {
-
+                revoke()
             }
             R.id.nav_slideshow -> {
 
@@ -148,15 +219,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth?.addAuthStateListener(firebaseAuthListener!!)
+    }
 
+    fun goLogInScreen(){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
+    fun revoke(){
+        firebaseAuth?.signOut()
 
+        Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback { status ->
+            if (status.isSuccess) {
+                //goLogInScreen();
+            } else {
+                Toast.makeText(applicationContext, R.string.not_revoke, Toast.LENGTH_SHORT).show()
+            }
+        }
 
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
-
-
-
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
 }
