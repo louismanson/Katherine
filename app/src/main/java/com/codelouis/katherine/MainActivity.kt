@@ -3,7 +3,6 @@ package com.codelouis.katherine
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -25,8 +24,6 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.ResultCallback
-import com.google.android.gms.common.api.Status
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -137,9 +134,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setUserData(user: FirebaseUser){
         Toast.makeText(this, "Loging as " + user.email!!, Toast.LENGTH_SHORT).show()
-        nameTextView?.text = user.displayName
-        emailTextView?.text = user.email
+        nameTextView!!.text = user.displayName
+        emailTextView!!.text = user.email
         Glide.with(baseContext).load(user.photoUrl).into(photoImageView!!)
+        Glide.with(this).load("https://picsum.photos/400/250/?random").into(backgroundView!!)
     }
 
 

@@ -20,6 +20,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "backend"
+    productFlavors {
+        firebase {
+            applicationId
+            "com.codelouis.catherine"
+            versionName "firebase"
+            dimension "backend"
+        }
+        azure {
+            applicationId
+            "com.codelouis.catherine.azure"
+            versionName "azure"
+            dimension "backend"
+        }
+    }
 }
 
 dependencies {
